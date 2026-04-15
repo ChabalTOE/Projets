@@ -1,13 +1,15 @@
 
 from pathlib import Path
-import os
 import dj_database_url
-
+import os
 BASE_DIR=Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',') if os.environ.get('ALLOWED_HOSTS') else ['*']
+SECRET_KEY="dev"
+DEBUG=True
+ALLOWED_HOSTS=[]
+SECRET_KEY=os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
+DEBUG=os.environ.get('DEBUG', 'False')=='True'
+ALLOWED_HOSTS=os.environ.get('ALLOWED_HOSTS', '*').split(',') if os.environ.get('ALLOWED_HOSTS') else ['*']
 
 INSTALLED_APPS=[
 'django.contrib.admin','django.contrib.auth','django.contrib.contenttypes',
@@ -16,6 +18,7 @@ INSTALLED_APPS=[
 ]
 
 MIDDLEWARE=[
+'whitenoise.middleware.WhiteNoiseMiddleware',
 'corsheaders.middleware.CorsMiddleware',
 'django.middleware.security.SecurityMiddleware',
 'django.contrib.sessions.middleware.SessionMiddleware',
@@ -44,16 +47,19 @@ TEMPLATES=[
 ]
 
 DATABASES = {
-    'default': dj_database_url.config(default=f'sqlite:///{BASE_DIR}/db.sqlite3')
+    'default': dj_database_url.config(
+        default=f'sqlite:///{os.path.join(BASE_DIR, "db.sqlite3")}'
+    )
 }
 
 REST_FRAMEWORK={'DEFAULT_AUTHENTICATION_CLASSES':(
 'rest_framework_simplejwt.authentication.JWTAuthentication',
 )}
 
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    'CORS_ALLOWED_ORIGINS',
+    'http://localhost:3000'
+).split(',')
 CORS_ALLOW_CREDENTIALS = True
-
 STATIC_URL='/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 DEFAULT_AUTO_FIELD='django.db.models.BigAutoField'
