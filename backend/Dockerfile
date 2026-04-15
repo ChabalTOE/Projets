@@ -9,6 +9,9 @@ COPY backend/ .
 
 RUN python manage.py collectstatic --noinput
 
+COPY backend/start.sh .
+RUN chmod +x start.sh
+
 EXPOSE 8000
 
-CMD ["sh", "-c", "gunicorn config.wsgi --bind 0.0.0.0:$PORT"]
+CMD ["./start.sh"]
